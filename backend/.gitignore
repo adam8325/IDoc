@@ -1,0 +1,5 @@
+# Ignorer venv
+venv/
+
+# Ignorer API nøgler
+.env
