@@ -66,7 +66,7 @@ export default function Home() {
               <h1
                 className="text-2xl font-bold bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-600 bg-clip-text text-transparent"
               >
-                DocIt
+                IDoc
               </h1>
               <p className="text-sm text-muted-foreground">
                 AI-drevet generator til kodedokumentation
@@ -140,18 +140,25 @@ export default function Home() {
               </div>
                   
               <div className='flex flex-col gap-4 bg-white p-4 rounded-lg border-slate-200 border'>
-                <p className='font-semibold text-sm'>Tilføj Knowledge Base (Beta)</p>
+                <div className='flex flex-col items-center'>
+                  <p className='font-semibold'>Tilføj Knowledge Base</p>
+                  <p className='text-sm'>(Under udvikling)</p>
+                </div>                
                 <p className='text-xs text-center'>Skræddersy dokumentationen i henhold til jeres guidelines og kodestandarder</p>
-                 <label className="flex justify-center bg-[linear-gradient(135deg,hsl(250_50%_96%),hsl(280_50%_98%))] font-semibold text-black text-xs px-4 py-2 rounded cursor-pointer hover:bg-[linear-gradient(90deg,#00f5d4,#06b6d4)] hover:text-white" htmlFor="file-upload">
-                    Upload filer
-                    <input
-                      id="file-upload"
-                      type="file"
-                      accept=".js,.ts,.py,.java,.txt"
-                      // onChange={handleFile}
-                      className="hidden"
-                    />
-                  </label>
+                 <button
+                  className="flex justify-center bg-gray-300 text-gray-500 font-semibold text-xs px-4 py-2 rounded cursor-not-allowed"
+                  htmlFor="file-upload"
+                >
+                  Upload filer
+                  {/* <input
+                    id="file-upload"
+                    type="file"
+                    accept=".js,.ts,.py,.java,.txt"
+                    className="hidden"
+                    disabled
+                  /> */}
+                </button>
+
               </div>
             </section>
         </div>
