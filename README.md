@@ -50,12 +50,3 @@ npm install
 npm run dev
 # open http://localhost:3000
 ```
-
-## Tabeller / database (Supabase)
-Eksempelskema for `kb_chunks`:
-- id serial primary key
-- filename text
-- content text
-- embedding jsonb
-- chunk_index int
-
