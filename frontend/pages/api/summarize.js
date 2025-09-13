@@ -4,6 +4,7 @@ export default async function handler(req, res) {
   const body = req.body
   try {
     const backendUrl = process.env.PY_API_URL || 'http://localhost:8000'
+    console.log(process.env.PY_API_URL)
     const r = await fetch(`${backendUrl}/summarize`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
