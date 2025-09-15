@@ -21,6 +21,21 @@ export default function Upload({loading, setLoading, text, setText, mode, setMod
     } finally { setLoading(false) }
   }
 
+  function handleContextFileUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const formData = new FormData();
+  formData.append('file', file);
+
+  fetch('/api/uploadContext', {
+    method: 'POST',
+    body: formData,
+  })
+    .then(res => res.json())
+    .then(data => alert('Upload succes!'))
+    .catch(err => alert('Fejl ved upload'));
+}
+
   function handleFile(e) {
     const f = e.target.files?.[0]
     if (!f) return
@@ -89,19 +104,16 @@ export default function Upload({loading, setLoading, text, setText, mode, setMod
                   <p className='text-sm'>(Under udvikling)</p>
                 </div>                
                 <p className='text-xs text-center'>Skræddersy dokumentationen i henhold til jeres guidelines og kodestandarder</p>
-                 <button
-                  className="flex justify-center bg-gray-300 text-gray-500 font-semibold text-xs px-4 py-2 rounded cursor-not-allowed"
-                  htmlFor="file-upload"
-                >
-                  Upload filer
-                  {/* <input
-                    id="file-upload"
+                 <label className="flex justify-center cursor-pointer bg-gray-300 text-gray-500 font-semibold text-xs px-4 py-2 rounded">
+                  Upload fil
+                  <input
                     type="file"
                     accept=".js,.ts,.py,.java,.txt"
+                    onChange={handleContextFileUpload}
                     className="hidden"
-                    disabled
-                  /> */}
-                </button>
+                  />
+                </label>
+
 
               </div>
             </section>  

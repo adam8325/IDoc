@@ -1,5 +1,5 @@
 # backend/app.py
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import os
@@ -41,3 +41,11 @@ async def summarize(r: Req):
     return {"output": output}
   except Exception as e:
     raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/uploadContext")
+async def upload_context(file: UploadFile = File(...)):
+  content = await file.read()
+  text = content.decode("utf-8")
+  # Her kan du nu chunk'e, embedde og gemme i Supabase
+  return {"message": "File received", "length": len(text)}
