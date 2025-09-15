@@ -1,6 +1,7 @@
 # IDoc — AI-drevet kode-dokumentationsgenerator
 
-Dette repository indeholder en simpel prototype af "IDoc": et værktøj der hjælper udviklere med at generere meningsfuld dokumentation ud fra kodeudsnit. README er designet som et interview-venligt overblik du kan fremvise under jobsamtalen.
+Dette repository indeholder en simpel prototype af "IDoc": et værktøj der hjælper udviklere med at generere meningsfuld dokumentation ud fra kodeudsnit.
+Start med at dokumentere din kode her: https://iduckdocks.vercel.app/ 
 
 ## Højniveau beskrivelse
 IDoc er en lille webapp (Next.js frontend + FastAPI backend), hvor brugeren kan indsætte eller uploade kode, vælge dokumentationstype ("Teknisk / Dev" eller "Brugervenlig"), og få genereret dokumentation af AI. Der er også UX-funktioner som kopi-knap og download (genereret README.md).
