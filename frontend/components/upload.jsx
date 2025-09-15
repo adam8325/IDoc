@@ -1,0 +1,110 @@
+import React from "react";
+import { Code, Settings, Users } from "lucide-react";
+
+export default function Upload({loading, setLoading, text, setText, mode, setMode, setOutput}) {
+
+  async function generateDoc(e) {
+    e?.preventDefault()
+    setLoading(true)
+    setOutput('')
+    try {
+      const res = await fetch('/api/summarize', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ text, mode }),
+      })
+      const data = await res.json()
+      if (res.ok) setOutput(data.output)
+      else setOutput('Fejl: ' + (data.detail || data.error || JSON.stringify(data)))
+    } catch (err) {
+      setOutput('Netværksfejl: ' + String(err))
+    } finally { setLoading(false) }
+  }
+
+  function handleFile(e) {
+    const f = e.target.files?.[0]
+    if (!f) return
+    const reader = new FileReader()
+    reader.onload = (ev) => setText(String(ev.target.result))
+    reader.readAsText(f)
+  }
+
+    return (
+        <div className='flex justify-between gap-4'>
+            <section className="bg-white w-5/7 p-4 rounded-lg border-slate-200 border">
+              <div className='flex items-center justify-between py-4'>
+                <div className="flex items-center gap-2">
+                  <Code className=" rounded-sm h-6 w-6 p-1 h-5 w-5 text-white bg-gradient-to-r from-indigo-400 to-purple-600" />
+                  <label className="block font-medium">Din kode</label>
+                </div>            
+              </div>          
+                <textarea
+                  className="w-full h-64 p-3 font-mono text-sm border-dashed border border-stone-400 rounded-lg "
+                  placeholder="Indsæt kode her eller upload en fil..."
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                />
+                <div className="flex items-center gap-3 mt-3">
+                  <label className="bg-[linear-gradient(135deg,hsl(250_50%_96%),hsl(280_50%_98%))] font-semibold text-black text-xs px-4 py-2 rounded cursor-pointer hover:bg-[linear-gradient(90deg,#00f5d4,#06b6d4)] hover:text-white" htmlFor="file-upload">
+                    Upload fil
+                    <input
+                      id="file-upload"
+                      type="file"
+                      accept=".js,.ts,.py,.java,.txt"
+                      onChange={handleFile}
+                      className="hidden"
+                    />
+                  </label>
+                  <button onClick={generateDoc} disabled={loading} className="ml-auto bg-gradient-to-r from-indigo-400 to-purple-600 text-white font-semibold rounded-lg px-6 py-3 text-center px-2 py-1 text-sm hover:cursor-pointer hover:from-indigo-500 hover:to-purple-700">
+                    {loading ? 'Genererer...' : 'Generér dokumentation'}
+                  </button>
+                </div>
+            </section>        
+            <section className='flex flex-1 flex-col gap-4'>
+              <div className='flex flex-col items-center gap-4 bg-white p-4 rounded-lg border-slate-200 border'>
+                  <p className='font-semibold'>Dokumentations Type</p>
+                    <div className="flex items-center justify-between gap-2">
+                      <button onClick={() => setMode('dev')} className={`flex flex-col items-center gap-2 font-semibold py-2 px-4.5 text-xs rounded-lg hover:cursor-pointer ${mode==='dev' ? 'bg-purple-600 text-white' : 'bg-[linear-gradient(135deg,hsl(250_50%_96%),hsl(280_50%_98%))]'}`}>
+                        <Settings className="h-3 w-3" />
+                        <div className='flex flex-col'>
+                          <p className=''>Teknisk</p>
+                        <p className='text-[9px] text-stone-400'>For udviklere</p>
+                        </div>
+                        
+                      </button>
+                      <button onClick={() => setMode('user')} className={`flex flex-col items-center gap-2 font-semibold py-2 px-3 text-xs rounded-lg hover:cursor-pointer ${mode==='user' ? 'bg-purple-600 text-white' : 'bg-[linear-gradient(135deg,hsl(250_50%_96%),hsl(280_50%_98%))]'}`}>
+                        <Users className="h-3 w-3" />
+                        <div className='flex flex-col'>
+                          <p className=''>Brugervenlig</p>
+                        <p className='text-[9px] text-stone-400'>For brugere</p>
+                        </div>
+                        
+                      </button>
+                    </div>
+              </div>
+                  
+              <div className='flex flex-col gap-4 bg-white p-4 rounded-lg border-slate-200 border'>
+                <div className='flex flex-col items-center'>
+                  <p className='font-semibold'>Tilføj Knowledge Base</p>
+                  <p className='text-sm'>(Under udvikling)</p>
+                </div>                
+                <p className='text-xs text-center'>Skræddersy dokumentationen i henhold til jeres guidelines og kodestandarder</p>
+                 <button
+                  className="flex justify-center bg-gray-300 text-gray-500 font-semibold text-xs px-4 py-2 rounded cursor-not-allowed"
+                  htmlFor="file-upload"
+                >
+                  Upload filer
+                  {/* <input
+                    id="file-upload"
+                    type="file"
+                    accept=".js,.ts,.py,.java,.txt"
+                    className="hidden"
+                    disabled
+                  /> */}
+                </button>
+
+              </div>
+            </section>  
+        </div>
+    )
+}
