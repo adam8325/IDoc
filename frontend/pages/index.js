@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import Header from "../components/Header"
-import Intro from "../components/Intro"
-import Output from "../components/Output"
-import Upload from "../components/Upload"
+import Header from "../components/header"
+import Intro from "../components/intro"
+import Output from "../components/output"
+import Upload from "../components/upload"
 
 export default function Home() {
   const [text, setText] = useState('')
