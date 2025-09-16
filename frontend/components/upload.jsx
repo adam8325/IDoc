@@ -1,21 +1,47 @@
 import React from "react";
+import { useOutput } from "./outputContext";
 import { Code, Settings, Users } from "lucide-react";
 
-export default function Upload({loading, setLoading, text, setText, mode, setMode, setOutput}) {
+export default function Upload({loading, setLoading, text, setText, mode, setMode}) {
+
+  const { setOutput, setOutputSource } = useOutput();
+
+  const [contextUploaded, setContextUploaded] = React.useState(false);
 
   async function generateDoc(e) {
     e?.preventDefault()
     setLoading(true)
     setOutput('')
+
     try {
-      const res = await fetch('/api/summarize', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ text, mode }),
-      })
-      const data = await res.json()
-      if (res.ok) setOutput(data.output)
-      else setOutput('Fejl: ' + (data.detail || data.error || JSON.stringify(data)))
+
+      if(contextUploaded) {
+        // Brugeren har uploadet en context-fil -> kør vector search
+        const res = await fetch('/api/queryContext', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ input: text, contextInfo: true }),
+      });
+      const data = await res.json();
+      if(res.ok) {
+        setOutput(data.output);
+        setOutputSource('context');
+      } else setOutput('Fejl: ' + (data.detail || data.error || JSON.stringify(data)));
+
+      } else {
+        // Ingen context-fil -> brug summarize
+        const res = await fetch('/api/summarize', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text, mode }),
+      });
+      const data = await res.json();
+      if(res.ok) {
+        setOutput(data.output);
+        setOutputSource('summarize');
+      } else setOutput('Fejl: ' + (data.detail || data.error || JSON.stringify(data)));
+      }
+
     } catch (err) {
       setOutput('Netværksfejl: ' + String(err))
     } finally { setLoading(false) }
@@ -32,7 +58,7 @@ export default function Upload({loading, setLoading, text, setText, mode, setMod
     body: formData,
   })
     .then(res => res.json())
-    .then(data => alert('Upload succes!'))
+    .then(data => setContextUploaded(true))
     .catch(err => alert('Fejl ved upload'));
 }
 
