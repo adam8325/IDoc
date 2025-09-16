@@ -3,3 +3,10 @@ venv/
 
 # Ignorer API nøgler
 .env
+
+
+__pycache__/
+supabase/
+langchain/
+node_modules/
+.next/

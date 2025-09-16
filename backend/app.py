@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from openai import OpenAI
+from context import process_file
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))  
 
@@ -47,5 +48,5 @@ async def summarize(r: Req):
 async def upload_context(file: UploadFile = File(...)):
   content = await file.read()
   text = content.decode("utf-8")
-  # Her kan du nu chunk'e, embedde og gemme i Supabase
+  result = process_file(file.filename, text)
   return {"message": "File received", "length": len(text)}
