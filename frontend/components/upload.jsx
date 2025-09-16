@@ -71,8 +71,8 @@ export default function Upload({loading, setLoading, text, setText, mode, setMod
   }
 
     return (
-        <div className='flex justify-between gap-4'>
-            <section className="bg-white w-5/7 p-4 rounded-lg border-slate-200 border">
+        <div className='flex flex-col sm:flex-row sm:justify-between gap-4'>
+            <section className="bg-white sm:w-5/7 p-4 rounded-lg border-slate-200 border order-2 sm:order-1">
               <div className='flex items-center justify-between py-4'>
                 <div className="flex items-center gap-2">
                   <Code className=" rounded-sm h-6 w-6 p-1 h-5 w-5 text-white bg-gradient-to-r from-indigo-400 to-purple-600" />
@@ -85,8 +85,8 @@ export default function Upload({loading, setLoading, text, setText, mode, setMod
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                 />
-                <div className="flex items-center gap-3 mt-3">
-                  <label className="bg-[linear-gradient(135deg,hsl(250_50%_96%),hsl(280_50%_98%))] font-semibold text-black text-xs px-4 py-2 rounded cursor-pointer hover:bg-[linear-gradient(90deg,#00f5d4,#06b6d4)] hover:text-white" htmlFor="file-upload">
+                <div className="flex items-center justify-center gap-2 mt-3">
+                  <label className="bg-[linear-gradient(135deg,hsl(250_50%_96%),hsl(280_50%_98%))] font-semibold text-black text-[10px] sm:text-xs px-3 py-1 sm:px-6 sm:py-3 rounded-sm sm:rounded-lg cursor-pointer hover:bg-[linear-gradient(90deg,#00f5d4,#06b6d4)] hover:text-white" htmlFor="file-upload">
                     Upload fil
                     <input
                       id="file-upload"
@@ -96,12 +96,12 @@ export default function Upload({loading, setLoading, text, setText, mode, setMod
                       className="hidden"
                     />
                   </label>
-                  <button onClick={generateDoc} disabled={loading} className="ml-auto bg-gradient-to-r from-indigo-400 to-purple-600 text-white font-semibold rounded-lg px-6 py-3 text-center px-2 py-1 text-sm hover:cursor-pointer hover:from-indigo-500 hover:to-purple-700">
+                  <button onClick={generateDoc} disabled={loading} className="ml-auto bg-gradient-to-r from-indigo-400 to-purple-600 text-white font-semibold rounded-sm sm:rounded-lg px-3 py-1 sm:px-6 sm:py-3 text-center text-[10px]  sm:text-sm hover:cursor-pointer hover:from-indigo-500 hover:to-purple-700">
                     {loading ? 'Genererer...' : 'Generér dokumentation'}
                   </button>
                 </div>
             </section>        
-            <section className='flex flex-1 flex-col gap-4'>
+            <section className='flex flex-1 flex-col gap-4 order-1 sm:order-2'>
               <div className='flex flex-col items-center gap-4 bg-white p-4 rounded-lg border-slate-200 border'>
                   <p className='font-semibold'>Dokumentations Type</p>
                     <div className="flex items-center justify-between gap-2">

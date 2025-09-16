@@ -92,7 +92,7 @@ async def query_context(req: QueryContextReq):
             print("[ERROR] Supabase RPC fejlede:", sup_err)
             return {"error": f"Supabase RPC fejlede: {sup_err}"}
 
-        # 4. Fallback hvis ingen context chunks
+        # 4. Fallback med summarize endpointet
         if not res.data:
             print("[DEBUG] Ingen context chunks fundet, fallback til summarize")
             prompt = f"Du har ikke uploadet nogen context-filer. Opsummer venligst koden:\n{req.input}"
@@ -104,10 +104,16 @@ async def query_context(req: QueryContextReq):
             )
             return {"output": resp.choices[0].message.content}
 
+        #TODO: Lige nu laver den ikke vector search, hvis der ikke er uploadet filer
+
         # 5. Saml relevante chunks
         top_chunks = [row["content"] for row in res.data]
+        print(f"[DEBUG] Top {len(top_chunks)} chunks samlet:")
+        for i, chunk in enumerate(top_chunks, 1):
+            preview = chunk[:200].replace("\n", " ")  # vis kun de første 200 tegn uden nye linjer
+            print(f"   [Chunk {i}] {preview}...")
+
         context_text = "\n".join(top_chunks)
-        print(f"[DEBUG] Top {len(top_chunks)} chunks samlet.")
 
         # 6. Generer dokumentation med context
         prompt = f"Brug følgende context fra knowledge base til at generere dokumentation:\n{context_text}\n\nKode:\n{req.input}"
