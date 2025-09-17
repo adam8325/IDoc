@@ -7,7 +7,7 @@ import Upload from "../components/upload"
 
 export default function Home() {
   const [text, setText] = useState('')
-  const [mode, setMode] = useState('user') // 'dev' eller 'user'
+  const [mode, setMode] = useState('dev') // 'dev' eller 'user'
   const [loading, setLoading] = useState(false)
   const [output, setOutput] = useState('')
 

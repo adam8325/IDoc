@@ -34,13 +34,14 @@ export default function Output() {
             <div className='flex items-center gap-2'>
               <button
                 onClick={copyOutput}
-                className='py-1 px-2 sm:py-2 sm:px-3 bg-[linear-gradient(135deg,hsl(250_50%_96%),hsl(280_50%_98%))] cursor-pointer flex items-center gap-2 text-[10px] sm:text-sm rounded-lg hover:bg-[linear-gradient(90deg,#00f5d4,#06b6d4)] hover:text-white'>
+                className='py-1 px-2 sm:py-2 sm:px-3 bg-[linear-gradient(135deg,hsl(250_50%_96%),hsl(280_50%_98%))] cursor-pointer flex items-center gap-2 font-semibold text-black text-xs sm:text-sm rounded-sm sm:rounded-md hover:bg-[linear-gradient(90deg,#06b6d4,#6366f1)] hover:text-white'>
                 <Copy className="h-4 w-4" />
                 Kopiér
               </button>
               <button
                 onClick={downloadOutput}
-                className='py-1 px-2 sm:py-2 sm:px-3  bg-[linear-gradient(135deg,hsl(250_50%_96%),hsl(280_50%_98%))] cursor-pointer flex items-center gap-2 text-[10px] sm:text-sm rounded-lg hover:bg-[linear-gradient(90deg,#00f5d4,#06b6d4)] hover:text-white'>
+                className='py-1 px-2 sm:py-2 sm:px-3  bg-[linear-gradient(135deg,hsl(250_50%_96%),hsl(280_50%_98%))] cursor-pointer flex items-center gap-2 font-semibold text-black text-xs sm:text-sm rounded-sm sm:rounded-md 
+                hover:bg-[linear-gradient(90deg,#06b6d4,#6366f1)] hover:text-white'>
                 <Download className="h-4 w-4" />
                 Download
               </button>
