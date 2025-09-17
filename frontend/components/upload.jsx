@@ -7,6 +7,7 @@ export default function Upload({ text, setText, mode, setMode }) {
   const [contextUploaded, setContextUploaded] = React.useState(false);
   const [loadingUpload, setLoadingUpload] = React.useState(false);
   const [loadingGenerate, setLoadingGenerate] = React.useState(false);
+  const [uploadedFilename, setUploadedFilename] = React.useState("");
 
   async function generateDoc(e) {
     e?.preventDefault();
@@ -50,6 +51,7 @@ export default function Upload({ text, setText, mode, setMode }) {
       setLoadingUpload(false);
       return;
     }
+    setUploadedFilename(file.name); 
     const formData = new FormData();
     formData.append("file", file);
 
@@ -75,6 +77,23 @@ export default function Upload({ text, setText, mode, setMode }) {
     reader.onload = (ev) => setText(String(ev.target.result));
     reader.readAsText(f);
   }
+
+ function removeUploadedFile() {
+  // Kald backend for at fjerne filen
+  fetch('/api/removeContext', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ filename: uploadedFilename }),
+  })
+    .then(() => {
+      setUploadedFilename("");
+      setContextUploaded(false);
+    })
+    .catch(() => {
+      setUploadedFilename("");
+      setContextUploaded(false);
+    });
+}
 
   return (
     <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
@@ -162,22 +181,41 @@ export default function Upload({ text, setText, mode, setMode }) {
             <p className="font-semibold">Tilføj Knowledge Base</p>
           </div>
           <p className="text-xs sm:text-sm text-center">Skræddersy dokumentationen i henhold til jeres guidelines og kodestandarder</p>
-          <label className="flex justify-center cursor-pointer bg-[linear-gradient(135deg,hsl(250_50%_96%),hsl(280_50%_98%))] hover:bg-[linear-gradient(90deg,#06b6d4,#6366f1)] font-semibold text-black text-xs sm:text-sm px-4 py-2 rounded-sm sm:rounded-md hover:text-white">
-            {loadingUpload ? (
-              <div className="flex items-center gap-2">
-                <Loader className="animate-spin w-4 h-4 text-white" />
-                <span>Uploader...</span>
+          <div className="flex flex-col items-center gap-4">
+             {uploadedFilename && (
+              <div className="flex items-center gap-1">
+                <span className="truncate max-w-[120px] text-xs sm:text-sm">{uploadedFilename}</span>
+                <button
+                  type="button"
+                  onClick={removeUploadedFile}
+                  className="ml-1 text-red-500 hover:text-red-700 cursor-pointer"
+                  tabIndex={0}
+                >
+                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
               </div>
-            ) : (
-              "Upload fil"
             )}
-            <input
-              type="file"
-              accept=".js,.ts,.py,.java,.txt"
-              onChange={handleContextFileUpload}
-              className="hidden"
-            />
-          </label>
+            <label className="bg-[linear-gradient(135deg,hsl(250_50%_96%),hsl(280_50%_98%))] font-semibold w-full text-center text-black text-xs sm:text-sm px-4 py-2 rounded-sm sm:rounded-md cursor-pointer hover:bg-[linear-gradient(90deg,#06b6d4,#6366f1)] hover:text-white">
+              {loadingUpload ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Loader className="animate-spin w-4 h-4 text-blue" />
+                  <span className="text-center">Uploader...</span>
+                </div>
+              ) : (
+                "Upload fil"
+              )}
+              <input
+                type="file"
+                accept=".js,.ts,.py,.java,.txt"
+                onChange={handleContextFileUpload}
+                className="hidden"
+              />
+            </label>
+           
+          </div>
         </div>
       </section>
     </div>

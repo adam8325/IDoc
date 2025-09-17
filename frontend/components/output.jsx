@@ -48,8 +48,8 @@ export default function Output() {
             </div>
           </div>
            <div className='mb-2 text-xs'>
-            {outputSource === 'context' && '🔹 Brugerens context-fil blev brugt'}
-            {outputSource === 'summarize' && '🔹 Opsummering uden context'}
+            {outputSource === 'context' && '🔹 Baseret på din context-fil'}
+            {outputSource === 'summarize' && ''}
           </div>
           <pre className="whitespace-pre-wrap p-4 rounded-lg text-sm bg-[linear-gradient(135deg,hsl(250_50%_96%),hsl(280_50%_98%))]">{output || 'Ingen output endnu'}</pre>
         </section>

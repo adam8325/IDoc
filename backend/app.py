@@ -45,6 +45,17 @@ def looks_like_code(text):
 
 #API Endpoints
 
+@app.post("/removeContext")
+async def remove_context(req: dict):
+    filename = req.get("filename")
+    if not filename:
+        return {"error": "No filename provided"}
+    try:
+        supabase.table("idoc").delete().eq("filename", filename).execute()
+        return {"message": "File removed"}
+    except Exception as e:
+        return {"error": str(e)}
+
 @app.post("/summarize")
 async def summarize(r: Req):
   if not r.text:
