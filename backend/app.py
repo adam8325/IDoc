@@ -75,19 +75,16 @@ async def query_context(req: QueryContextReq):
             input=req.input
         ).data[0].embedding
 
-        print("[DEBUG] Embedding lavet. Længde:", len(input_emb))
-
         # 3. Supabase vector search via RPC
         try:
             res = supabase.rpc(
                 "match_idoc_chunks",
                 {
                     "query_embedding": input_emb,
-                    "match_threshold": 0.75,
+                    "match_threshold": 0.1,
                     "match_count": 5
                 }
             ).execute()
-            print("[DEBUG] Supabase RPC resultater:", res.data)
         except Exception as sup_err:
             print("[ERROR] Supabase RPC fejlede:", sup_err)
             return {"error": f"Supabase RPC fejlede: {sup_err}"}
@@ -116,13 +113,14 @@ async def query_context(req: QueryContextReq):
         context_text = "\n".join(top_chunks)
 
         # 6. Generer dokumentation med context
-        prompt = f"Brug følgende context fra knowledge base til at generere dokumentation:\n{context_text}\n\nKode:\n{req.input}"
+        prompt = f"Brug følgende context fra knowledge base til at generere dokumentation:\n{context_text}\n\nKode:\n{req.input}. Inkluder ikke noget information fra context, der ikke er relevant for koden, og du skal ikke opsummere punkterne fra context. Hvis context er relevant, så tilret brugerens kode baseret på contexten. Som en start kan du nævne: 'Baseret på den givne context'"
         resp = client.chat.completions.create(
             model="gpt-4o",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=800,
             temperature=0.1
         )
+        print("[DEBUG] Genereret dokumentation med context.")
 
         return {"output": resp.choices[0].message.content}
 
