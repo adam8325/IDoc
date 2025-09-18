@@ -20,7 +20,7 @@ export default function Upload({ text, setText, mode, setMode }) {
         const res = await fetch("/api/queryContext", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ input: text, contextInfo: true, filename: uploadedFilename}),
+          body: JSON.stringify({ input: text, contextInfo: true, filename: uploadedFilename, mode}),
         });
         console.log("Uploaded filename:", uploadedFilename)
         const data = await res.json();

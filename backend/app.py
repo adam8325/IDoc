@@ -30,6 +30,7 @@ class QueryContextReq(BaseModel):
     input: str
     contextInfo: bool
     filename: str = None
+    mode: str 
 
 def looks_like_code(text):
     patterns = [
@@ -152,8 +153,22 @@ async def query_context(req: QueryContextReq):
 
         context_text = "\n".join(top_chunks)
 
-        # 6. Generer dokumentation med context
-        prompt = f"Brug følgende context fra knowledge base til at generere dokumentation:\n{context_text}\n\nKode:\n{req.input}. Inkluder ikke noget information fra context, der ikke er relevant for koden, og du skal ikke opsummere punkterne fra context. Hvis context er relevant, så tilret brugerens kode baseret på contexten. Som en start kan du nævne: 'Baseret på den givne context'"
+       # 6. Lav prompt baseret på mode
+        if req.mode == "dev":
+            prompt = (
+                f"Baseret på den givne context, ret følgende kode til at følge standarderne.\n\n"
+                f"Returnér kun den rettede kode i en kodeblok. Ingen forklaring eller kommentarer.\n\n"
+                f"Context:\n{context_text}\n\nKode:\n{req.input}"
+            )
+        else:  # default til "user"
+            prompt = (
+                f"Baseret på den givne context, ret følgende kode til at følge standarderne.\n\n"
+                f"Forklar ændringerne kort i punktopstilling først, og vis derefter den rettede kode i en kodeblok.\n"
+                f"Skriv i et let forståeligt sprog.\n\n"
+                f"Context:\n{context_text}\n\nKode:\n{req.input}"
+            )
+
+        # 7. Generer output
         resp = client.chat.completions.create(
             model="gpt-4o",
             messages=[{"role": "user", "content": prompt}],
