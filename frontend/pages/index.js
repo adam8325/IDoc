@@ -5,10 +5,14 @@ import Intro from "../components/intro"
 import Output from "../components/output"
 import Upload from "../components/upload"
 
+
+// #TODO: Consider moving state to specific components
+
 export default function Home() {
   const [text, setText] = useState('')
   const [mode, setMode] = useState('dev') // 'dev' eller 'user'
   const [output, setOutput] = useState('')
+
 
   return (
     <OutputProvider>

@@ -2,6 +2,8 @@ import React from "react";
 import { useOutput } from "./outputContext";
 import { Code, Settings, Users, Loader } from "lucide-react";
 
+// #TODO: Remove debugging logs
+
 export default function Upload({ text, setText, mode, setMode }) {
   const { setOutput, setOutputSource } = useOutput();
   const [contextUploaded, setContextUploaded] = React.useState(false);
@@ -18,9 +20,11 @@ export default function Upload({ text, setText, mode, setMode }) {
         const res = await fetch("/api/queryContext", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ input: text, contextInfo: true }),
+          body: JSON.stringify({ input: text, contextInfo: true, filename: uploadedFilename}),
         });
+        console.log("Uploaded filename:", uploadedFilename)
         const data = await res.json();
+        console.log("Response context data:", data);
         if (res.ok) {
           setOutput(data.output);
           setOutputSource("context");
@@ -32,6 +36,7 @@ export default function Upload({ text, setText, mode, setMode }) {
           body: JSON.stringify({ text, mode }),
         });
         const data = await res.json();
+        console.log("Response summarize data:", data);
         if (res.ok) {
           setOutput(data.output);
           setOutputSource("summarize");
@@ -52,6 +57,7 @@ export default function Upload({ text, setText, mode, setMode }) {
       return;
     }
     setUploadedFilename(file.name); 
+    console.log("Selected file:", file.name);
     const formData = new FormData();
     formData.append("file", file);
 
@@ -133,7 +139,7 @@ export default function Upload({ text, setText, mode, setMode }) {
           >
              {loadingGenerate ? (
               <div className="flex items-center gap-2">
-                <Loader className="animate-spin w-4 h-4 text-white" />
+                <Loader className="animate-spin w-4 h-4 text-blue" />
                 <span>Genererer...</span>
               </div>
             ) : (

@@ -29,6 +29,7 @@ class Req(BaseModel):
 class QueryContextReq(BaseModel):
     input: str
     contextInfo: bool
+    filename: str = None
 
 def looks_like_code(text):
     patterns = [
@@ -116,12 +117,15 @@ async def query_context(req: QueryContextReq):
                 {
                     "query_embedding": input_emb,
                     "match_threshold": 0.1,
-                    "match_count": 5
+                    "match_count": 5, 
+                    "context_filename": req.filename
                 }
             ).execute()
         except Exception as sup_err:
             print("[ERROR] Supabase RPC fejlede:", sup_err)
             return {"error": f"Supabase RPC fejlede: {sup_err}"}
+
+        print(f"[DEBUG] context file name: {req.filename}")
 
         # 4. Fallback med summarize endpointet
         if not res.data:
@@ -139,6 +143,8 @@ async def query_context(req: QueryContextReq):
 
         # 5. Saml relevante chunks
         top_chunks = [row["content"] for row in res.data]
+        used_filenames = set(row["filename"] for row in res.data)
+        print(f"[DEBUG] Context-filer brugt til dokumentation: {', '.join(used_filenames)}")
         print(f"[DEBUG] Top {len(top_chunks)} chunks samlet:")
         for i, chunk in enumerate(top_chunks, 1):
             preview = chunk[:200].replace("\n", " ")  # vis kun de første 200 tegn uden nye linjer

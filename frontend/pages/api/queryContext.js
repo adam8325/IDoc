@@ -12,12 +12,13 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { input, contextInfo } = req.body;
+  const { input, contextInfo, filename } = req.body;
 
   // Build payload for backend
   const payload = {
     input,
     contextInfo,
+    filename
   };
 
   const backendUrl = process.env.PY_API_URL || "http://localhost:8000";
