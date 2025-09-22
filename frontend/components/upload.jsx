@@ -15,6 +15,14 @@ export default function Upload({ text, setText, mode, setMode }) {
     e?.preventDefault();
     setLoadingGenerate(true);
     setOutput("");
+
+    if (!looksLikeCode(text)) {
+      setOutput("Indtast venligst noget kode.");
+      setOutputSource("error");
+      setLoadingGenerate(false);
+      return;
+    }
+
     try {
       if (contextUploaded) {
         const res = await fetch("/api/queryContext", {
@@ -99,6 +107,18 @@ export default function Upload({ text, setText, mode, setMode }) {
       setUploadedFilename("");
       setContextUploaded(false);
     });
+}
+
+function looksLikeCode(text) {
+  const patterns = [
+    /\bdef\b/, /\bclass\b/, /\bimport\b/, /\bfunction\b/, /\bpublic\b/, /\bprivate\b/, /\bstatic\b/,
+    /\bvoid\b/, /\bint\b/, /\bfloat\b/, /\bstring\b/, /\bvar\b/, /\blet\b/, /\bconst\b/,
+    /\breturn\b/, /\bif\b/, /\belse\b/, /\bfor\b/, /\bwhile\b/, /\btry\b/, /\bcatch\b/,
+    /\busing\b/, /\bnamespace\b/, /\bextends\b/, /\bimplements\b/, /\binterface\b/,
+    /\{/, /\}/, /;/, /\(/, /\)/, /\[/, /\]/, /\/\//, /#/, /\/\*/, /\*\//
+  ];
+  const matches = patterns.filter(pattern => pattern.test(text)).length;
+  return matches >= 2;
 }
 
   return (
