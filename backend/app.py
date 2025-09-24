@@ -3,10 +3,15 @@ from fastapi import FastAPI, HTTPException, UploadFile, File
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from supabase import create_client
-import os
-import re
+from models import Req, QueryContextReq
 from openai import OpenAI
 from context import process_file
+import os
+import re
+
+#TODO:Add infocard to guide the user
+#TODO:Consider adjusting logic between context upload and input upload in terms of the documentation type
+#TODO:In addition maybe disable the Techincal Documentation option
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))  
 supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_API_KEY"))
@@ -19,30 +24,6 @@ app.add_middleware(
   allow_methods=["*"],
   allow_headers=["*"],
 )
-
-#Helper functions and classes
-
-class Req(BaseModel):
-  text: str
-  mode: str
-
-class QueryContextReq(BaseModel):
-    input: str
-    contextInfo: bool
-    filename: str = None
-    mode: str 
-
-def looks_like_code(text):
-    patterns = [
-        r"\bdef\b", r"\bclass\b", r"\bimport\b", r"\bfunction\b", r"\bpublic\b", r"\bprivate\b", r"\bstatic\b",
-        r"\bvoid\b", r"\bint\b", r"\bfloat\b", r"\bstring\b", r"\bvar\b", r"\blet\b", r"\bconst\b",
-        r"\breturn\b", r"\bif\b", r"\belse\b", r"\bfor\b", r"\bwhile\b", r"\btry\b", r"\bcatch\b",
-        r"\busing\b", r"\bnamespace\b", r"\bextends\b", r"\bimplements\b", r"\binterface\b",
-        r"\{", r"\}", r";", r"\(", r"\)", r"\[", r"\]", r"//", r"#", r"/\\*", r"\\*/"
-    ]
-    # Tjek for mindst 2 kode-patterns for at undgå false positives
-    matches = sum(bool(re.search(p, text)) for p in patterns)
-    return matches >= 2
 
 
 #API Endpoints
@@ -62,9 +43,6 @@ async def remove_context(req: dict):
 async def summarize(r: Req):
   if not r.text:
     raise HTTPException(status_code=400, detail="No text provided")
-
-  if not looks_like_code(r.text):
-        return {"output": "Indtast venligst noget kode."}
 
   if r.mode == "dev":
     prompt = f"""Du er en teknisk assistent. Lav teknisk dokumentation for koden nedenfor. Strukturér: kort beskrivelse, API/komponenter, setup, afhængigheder, eksempelkode.\n\nKode:\n{r.text}"""
@@ -100,8 +78,6 @@ async def query_context(req: QueryContextReq):
             return {"error": "Ingen context fil uploadet"}
         if not req.input:
             return {"error": "Ingen input tekst"}
-        if not looks_like_code(req.input):
-            return {"output": "Indtast venligst noget kode."}
 
         print("[DEBUG] Modtaget input:", req.input[:100], "...")  # vis kun de første 100 tegn
 
