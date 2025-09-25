@@ -4,7 +4,7 @@ import {Copy, Download} from "lucide-react";
 
 export default function Output() {
 
-  const { output, outputSource } = useOutput();
+  const { output, outputSource, uploadedFileName } = useOutput();
 
   function copyOutput() {
     if (output) {
@@ -48,7 +48,7 @@ export default function Output() {
             </div>
           </div>
            <div className='mb-2 text-xs'>
-            {outputSource === 'context' && '🔹 Baseret på jeres kodestandarder'}
+            {outputSource === 'context' && uploadedFileName && `🔹 Baseret på ${uploadedFileName}`}
             {outputSource === 'summarize' && ''}
           </div>
           <pre className="whitespace-pre-wrap p-4 rounded-lg text-sm bg-[linear-gradient(135deg,hsl(250_50%_96%),hsl(280_50%_98%))]">{output || 'Ingen output endnu'}</pre>

@@ -5,11 +5,11 @@ import { Code, Settings, Users, Loader } from "lucide-react";
 // #TODO: Remove debugging logs
 
 export default function Upload({ text, setText, mode, setMode }) {
-  const { setOutput, setOutputSource } = useOutput();
+  const { setOutput, setOutputSource, uploadedFileName, setUploadedFileName } = useOutput();
   const [contextUploaded, setContextUploaded] = React.useState(false);
   const [loadingUpload, setLoadingUpload] = React.useState(false);
   const [loadingGenerate, setLoadingGenerate] = React.useState(false);
-  const [uploadedFilename, setUploadedFilename] = React.useState("");
+  const [] = React.useState("");
 
   async function generateDoc(e) {
     e?.preventDefault();
@@ -28,9 +28,9 @@ export default function Upload({ text, setText, mode, setMode }) {
         const res = await fetch("/api/queryContext", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ input: text, contextInfo: true, filename: uploadedFilename, mode}),
+          body: JSON.stringify({ input: text, contextInfo: true, filename: uploadedFileName, mode}),
         });
-        console.log("Uploaded filename:", uploadedFilename)
+        console.log("Uploaded filename:", uploadedFileName)
         const data = await res.json();
         console.log("Response context data:", data);
         if (res.ok) {
@@ -64,7 +64,7 @@ export default function Upload({ text, setText, mode, setMode }) {
       setLoadingUpload(false);
       return;
     }
-    setUploadedFilename(file.name); 
+    setUploadedFileName(file.name);
     console.log("Selected file:", file.name);
     const formData = new FormData();
     formData.append("file", file);
@@ -97,14 +97,14 @@ export default function Upload({ text, setText, mode, setMode }) {
   fetch('/api/removeContext', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ filename: uploadedFilename }),
+    body: JSON.stringify({ filename: uploadedFileName }),
   })
     .then(() => {
-      setUploadedFilename("");
+      setUploadedFileName("");
       setContextUploaded(false);
     })
     .catch(() => {
-      setUploadedFilename("");
+      setUploadedFileName("");
       setContextUploaded(false);
     });
 }
@@ -208,9 +208,9 @@ function looksLikeCode(text) {
           </div>
           <p className="text-xs sm:text-sm text-center">Skræddersy dokumentationen i henhold til jeres guidelines og kodestandarder</p>
           <div className="flex flex-col items-center gap-4">
-             {uploadedFilename && (
+             {uploadedFileName && (
               <div className="flex items-center gap-1">
-                <span className="truncate max-w-[120px] text-xs sm:text-sm">{uploadedFilename}</span>
+                <span className="truncate max-w-[120px] text-xs sm:text-sm">{uploadedFileName}</span>
                 <button
                   type="button"
                   onClick={removeUploadedFile}
