@@ -8,4 +8,4 @@ class QueryContextReq(BaseModel):
     input: str
     contextInfo: bool
     filename: str = None
-    mode: str 
+    # mode: str 

@@ -28,7 +28,7 @@ export default function Upload({ text, setText, mode, setMode }) {
         const res = await fetch("/api/queryContext", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ input: text, contextInfo: true, filename: uploadedFileName, mode}),
+          body: JSON.stringify({ input: text, contextInfo: true, filename: uploadedFileName}),
         });
         console.log("Uploaded filename:", uploadedFileName)
         const data = await res.json();
@@ -169,39 +169,46 @@ function looksLikeCode(text) {
         </div>
       </section>
       <section className="flex flex-1 flex-col gap-4 order-1 sm:order-2">
-        <div className="flex flex-col items-center gap-4 bg-white p-4 rounded-lg border-slate-200 border">
-          <p className="font-semibold">Dokumentations Type</p>
-          <div className="flex items-center justify-between gap-4">
-            <button
-              onClick={() => setMode("dev")}
-              className={`flex flex-col items-center gap-2 font-semibold py-2 px-3 sm:py-2 sm:px-3 text-xs sm:text-sm rounded-sm sm:rounded-md hover:cursor-pointer ${
-                mode === "dev"
-                  ? "bg-purple-600 text-white"
-                  : "bg-[linear-gradient(135deg,hsl(250_50%_96%),hsl(280_50%_98%))]"
-              }`}
-            >
-              <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
-              <div className="flex flex-col">
-                <p className="">Teknisk</p>
-                <p className="text-[9px] sm:text-sm text-stone-400">For udviklere</p>
-              </div>
-            </button>
-            <button
-              onClick={() => setMode("user")}
-              className={`flex flex-col items-center gap-2 font-semibold py-2 px-3 text-xs sm:text-sm rounded-sm sm:rounded-md  hover:cursor-pointer ${
-                mode === "user"
-                  ? "bg-purple-600 text-white"
-                  : "bg-[linear-gradient(135deg,hsl(250_50%_96%),hsl(280_50%_98%))]"
-              }`}
-            >
-              <Users className="h-3 w-3 sm:h-4 sm:w-4" />
-              <div className="flex flex-col">
-                <p className="">Brugervenlig</p>
-                <p className="text-[9px] sm:text-sm text-stone-400">For brugere</p>
-              </div>
-            </button>
+        <div
+            className={`flex flex-col items-center gap-4 bg-white p-4 rounded-lg border-slate-200 border 
+              ${uploadedFileName ? "opacity-50 pointer-events-none" : ""}`}
+          >
+            <p className="font-semibold">Dokumentations Type</p>
+            <div className="flex items-center justify-between gap-4">
+              <button
+                onClick={() => setMode("dev")}
+                disabled={!!uploadedFileName}
+                className={`flex flex-col items-center gap-2 cursor-pointer font-semibold py-2 px-3 sm:py-2 sm:px-3 text-xs sm:text-sm rounded-sm sm:rounded-md 
+                  ${mode === "dev"
+                    ? "bg-purple-600 text-white"
+                    : "bg-[linear-gradient(135deg,hsl(250_50%_96%),hsl(280_50%_98%))]"
+                  }`}
+              >
+                <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
+                <div className="flex flex-col">
+                  <p className="">Teknisk</p>
+                  <p className="text-[9px] sm:text-sm text-stone-400">For udviklere</p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => setMode("user")}
+                disabled={!!uploadedFileName}
+                className={`flex flex-col items-center gap-2 cursor-pointer font-semibold py-2 px-3 text-xs sm:text-sm rounded-sm sm:rounded-md
+                  ${mode === "user"
+                    ? "bg-purple-600 text-white"
+                    : "bg-[linear-gradient(135deg,hsl(250_50%_96%),hsl(280_50%_98%))]"
+                  }`}
+              >
+                <Users className="h-3 w-3 sm:h-4 sm:w-4" />
+                <div className="flex flex-col">
+                  <p className="">Brugervenlig</p>
+                  <p className="text-[9px] sm:text-sm text-stone-400">For brugere</p>
+                </div>
+              </button>
+            </div>
           </div>
-        </div>
+
         <div className="flex flex-col gap-4 bg-white p-4 rounded-lg border-slate-200 border">
           <div className="flex flex-col items-center">
             <p className="font-semibold">Tilføj Knowledge Base</p>

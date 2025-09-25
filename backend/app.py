@@ -45,13 +45,13 @@ async def summarize(r: Req):
     raise HTTPException(status_code=400, detail="No text provided")
 
   if r.mode == "dev":
-    prompt = f"""Du er en teknisk assistent. Lav teknisk dokumentation for koden nedenfor. Strukturér: kort beskrivelse, API/komponenter, setup, afhængigheder, eksempelkode.\n\nKode:\n{r.text}"""
+    prompt = f"""Du er en teknisk assistent. Lav teknisk dokumentation for koden nedenfor. Strukturér: kort beskrivelse, API/komponenter, setup, afhængigheder.\n\nKode:\n{r.text}"""
   else:
     prompt = f"""Du er en brugervenlig assistent. Forklar kort hvad koden gør, hvordan man bruger den, og vigtigste funktioner - på et ikke-teknisk sprog.\n\nIndhold:\n{r.text}"""
 
   try:
     resp = client.chat.completions.create(
-      model="gpt-4o",
+      model="gpt-4o-mini",
       messages=[{"role": "user", "content": prompt}],
       max_tokens=800,
       temperature=0.1
@@ -129,24 +129,20 @@ async def query_context(req: QueryContextReq):
 
         context_text = "\n".join(top_chunks)
 
-       # 6. Lav prompt baseret på mode
-        if req.mode == "dev":
-            prompt = (
-                f"Baseret på den givne context, ret følgende kode til at følge standarderne.\n\n"
-                f"Returnér kun den rettede kode i en kodeblok. Ingen forklaring eller kommentarer.\n\n"
-                f"Context:\n{context_text}\n\nKode:\n{req.input}"
-            )
-        else:  # default til "user"
-            prompt = (
-                f"Baseret på den givne context, ret følgende kode til at følge standarderne.\n\n"
-                f"Forklar ændringerne kort i punktopstilling først, og vis derefter den rettede kode i en kodeblok.\n"
-                f"Skriv i et let forståeligt sprog.\n\n"
-                f"Context:\n{context_text}\n\nKode:\n{req.input}"
+       # 6. Prompt
+       
+        prompt = (
+                f"Du er en dokumentationsassistent.\n\n"
+                f"Virksomhedens standarder (context):\n{context_text}\n\n"
+                f"Baseret på den givne context, ret følgende kode: {req.input} til at følge kodestandarderne.\n\n"
+                f"Returnér kun den rettede kode i en kodeblok.\n\n"
+                f"Forklar kort hvad koden gør, hvordan man bruger den, og vigtigste funktioner - på et ikke-teknisk sprog - gerne opstilt i punktform, hvis koden er lang og det giver mening\n\n"
+                f"Tilføj til sidst en kort liste (maks 3 punkter) over hvilke rettelser der blev lavet i forhold til virksomhedens standarder, hvis der var nogen. Ellers lad vær med at inkludere dette afsnit.\n\n"                
             )
 
         # 7. Generer output
         resp = client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=800,
             temperature=0.1
