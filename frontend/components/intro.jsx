@@ -3,7 +3,7 @@ import React from "react";
 
 export default function Intro() {
     return (
-        <div className="text-center py-4">           
+        <div className="text-center">           
             <h2 className="text-xl sm:text-2xl font-bold mb-3">
                 Fra kode til klarhed – på få sekunder
             </h2>
